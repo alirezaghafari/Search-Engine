@@ -21,6 +21,7 @@ def persian_stopwords(path):
 
 my_normalizer = Normalizer()
 my_tokenizer = Tokenizer()
+stemmer = FindStems()
 
 
 def preprocess(contents_):
@@ -32,6 +33,8 @@ def preprocess(contents_):
         content_tokens = my_tokenizer.tokenize_words(normalized)
         tokens = []
         for token in content_tokens:
+            # stemming
+            token = stemmer.convert_to_stem(token)
             tokens.append(token)
         preprocessed_docs.append(tokens)
 
