@@ -35,6 +35,9 @@ def preprocess(contents_):
         for token in content_tokens:
             # stemming
             token = stemmer.convert_to_stem(token)
+            # remove stopwords
+            if token in stopwords_set:
+                continue
             tokens.append(token)
         preprocessed_docs.append(tokens)
 
