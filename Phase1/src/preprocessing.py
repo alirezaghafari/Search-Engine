@@ -20,6 +20,7 @@ def persian_stopwords(path):
 
 
 my_normalizer = Normalizer()
+my_tokenizer = Tokenizer()
 
 
 def preprocess(contents_):
@@ -28,6 +29,11 @@ def preprocess(contents_):
     for content in contents_:
         # normalizing
         normalized = my_normalizer.normalize(content)
+        content_tokens = my_tokenizer.tokenize_words(normalized)
+        tokens = []
+        for token in content_tokens:
+            tokens.append(token)
+        preprocessed_docs.append(tokens)
 
     return preprocessed_docs
 
