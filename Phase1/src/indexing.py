@@ -14,9 +14,19 @@ class Term:
         self.freq_in_doc[doc_id] += 1
         self.pos[doc_id].append(position)
 
-        
+
 def indexing(dictionary):
     terms_map  =  {}
+    for doc_id in range(len(dictionary)):
+        for pos in range(len(dictionary[doc_id])):
+            term  =  dictionary[doc_id][pos]
+            if term in terms_map:
+                term_obj  =  terms_map[term]
+            else:
+                term_obj  =  Term(len(dictionary))
+            term_obj.posting(pos, doc_id)
+            terms_map[term]  =  term_obj
+
     return terms_map
 
 terms_dictionary  =  get_tokens()
