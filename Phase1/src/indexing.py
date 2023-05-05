@@ -14,7 +14,6 @@ class Term:
         self.freq_in_doc[doc_id] += 1
         self.pos[doc_id].append(position)
 
-
 def indexing(dictionary):
     terms_map  =  {}
     for doc_id in range(len(dictionary)):
@@ -29,5 +28,8 @@ def indexing(dictionary):
 
     return terms_map
 
-terms_dictionary  =  get_tokens()
-positional_index  =  indexing(terms_dictionary)
+
+def get_positional_indexed():
+    terms_dictionary  =  get_tokens()
+    positional_index  =  indexing(terms_dictionary)
+    return positional_index

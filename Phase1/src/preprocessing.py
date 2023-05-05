@@ -18,14 +18,19 @@ def persian_stopwords(path):
         list_ = my_file.read().splitlines()
     return list_
 
+def get_stopwords():
+    stopwords_list = persian_stopwords("../data/stopwords.txt")
+    stopwords_set = {stopwords_list[i] for i in range(0, len(stopwords_list))}
+    return stopwords_set
 
 my_normalizer = Normalizer()
 my_tokenizer = Tokenizer()
 stemmer = FindStems()
 
 
-def preprocess(contents_, stopwords):
+def preprocess(contents_):
     preprocessed_docs = []
+    stopwords = get_stopwords()
 
     for content in contents_:
         # normalizing
@@ -43,13 +48,8 @@ def preprocess(contents_, stopwords):
 
     return preprocessed_docs
 
-
+documents = read_file('../data/IR_data_news_12k.json')
 def get_tokens():
-    documents = read_file('../data/IR_data_news_12k.json')
     contents = extract_contents(documents)
-    stopwords_list = persian_stopwords("../data/stopwords.txt")
-    stopwords_set = {stopwords_list[i] for i in range(0, len(stopwords_list))}
-    preprocessed_docs = preprocess(contents, stopwords_set)
+    preprocessed_docs = preprocess(contents)
     return preprocessed_docs
-
-
