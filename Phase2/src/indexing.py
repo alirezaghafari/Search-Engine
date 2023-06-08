@@ -81,3 +81,78 @@ def calculate_tf_for_query(term, tokens):
     if freq > 0:
         return 1 + math.log10(freq)
     return 0
+
+
+
+def champions_list(dictionary, r):
+    for term in dictionary:
+        dictionary[term].create_champions_list(r)
+
+
+
+
+def get_docs_norm(dictionary, number_of_docs):
+    lengths = np.zeros(number_of_docs)
+    for term in dictionary:
+        for doc_id, weight in dictionary[term].weight_in_doc.items():
+            lengths[int(doc_id)] += weight ** 2
+    return np.sqrt(lengths)
+
+
+
+
+def cosine_similarity(query_terms, dictionary, number_of_docs, norms):
+    scores = {}
+    for term in query_terms:
+        query_tfidf = calculate_tf_for_query(
+            term, query_terms) * calculate_idf(dictionary[term], number_of_docs)
+        for doc_id, doc_score in dictionary[term].get_champ_list().items():
+            if doc_id not in scores:
+                scores[doc_id] = 0
+            scores[doc_id] += query_tfidf * doc_score
+
+    for doc_id in scores:
+        scores[doc_id] /= norms[int(doc_id)]
+    return scores
+
+def jaccard_similarity(query_tokens,dictionary):
+    scores = {}
+    for term in query_tokens:
+        docs = list(dictionary[term].freq_in_doc.keys())
+        for doc_id in docs:
+            if doc_id not in scores:
+                intersection = len(list(set(terms_dictionary[doc_id]) & set(query_tokens)))
+                union = len(list(set(terms_dictionary[doc_id]))) + len(set(query_tokens))
+                score = intersection/union
+                scores[doc_id] = score
+    return scores
+
+
+
+def print_result(socres, k):
+    best_related_docs = dict(
+        sorted(socres.items(), key=lambda item: item[1], reverse=True)[:k])
+    for doc_id in best_related_docs:
+        title = documents[str(doc_id)]['title']
+        url = documents[str(doc_id)]['url']
+        print('title: ', title, '\nurl: ', url)
+        print('****************')
+
+
+
+terms_dictionary = preprocessed_docs
+positional_index = indexing(terms_dictionary)
+calculate_weights(positional_index, len(contents))
+champions_list(positional_index, 60)
+docs_norms = get_docs_norm(positional_index, len(contents))
+
+
+
+
+
+query = "شاگرد آنتونیو کونته"
+query_tokens = preprocess([query])[0]
+scores = jaccard_similarity(query_tokens,positional_index)
+# scores = cosine_similarity(
+#     query_tokens, positional_index, len(contents), docs_norms)
+print_result(scores, k=5)
